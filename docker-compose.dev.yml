@@ -1,0 +1,29 @@
+version: '3.8'
+
+services:                           # Define the containers
+
+ micro:                             # Micro container
+  build:
+   context: .                       # Build the container in the current context
+  ports:
+   - 8000:8000                      # Expose the container port 8000 into localhost:8000
+   - 9229:9229                      # Expose the container debug port 9229 into localhost:9229
+  environment:
+   - SERVER_PORT=8000               # Define the server port as an environment variable
+   - CONNECTIONSTRING=mongodb://mongo:27017/micro  # EnvVariable to connect to the DB
+  volumes:
+   - ./:/app                        # Bind mount the current directory from the container host into the app directory
+  command: npm run debug            # Run the app in the container in debug mode
+
+ mongo:                             # Database container named "mongo"
+  image: mongo:4.2.8                # Choose the image from the docker repo that will run in the container
+  ports:
+   - 27017:27017                    # Map the container port 27017 into localhost 27017
+  volumes:
+   - mongodb:/data/db               # Volume for database that maps to the folder in the mongo filesystem
+   - mongodb_config:/data/configdb  # Volume for database config that maps to the folder in the mongo filesystem
+
+volumes:
+ mongodb:                           # Create the database volume
+ mongodb_config:                    # Create the config volume
+
